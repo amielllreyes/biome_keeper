@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Silkscreen } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 
 const silkscreen = Silkscreen({
@@ -29,33 +30,33 @@ export default function RootLayout({
             alt="Biome Keeper Logo"
             className="w-16 h-16"
           />
-          <h1 className="text-3xl text-white"><a href="/">Biome Keeper</a></h1>
+          <h1 className="text-3xl text-white"><Link href="/">Biome Keeper</Link></h1>
           <nav className="ml-auto">
             <ul className="flex gap-4">
               <li>
-                <a href="/" className="text-white hover:text-emerald-300">
+                <Link href="/" className="text-white hover:text-emerald-300">
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/download" className="text-white hover:text-emerald-300">
+                <Link href="/download" className="text-white hover:text-emerald-300">
                   Download
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/aboutus" className="text-white hover:text-emerald-300">
+                <Link href="/aboutus" className="text-white hover:text-emerald-300">
                   About Us
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/login" className="text-white hover:text-emerald-300">
+                <Link href="/login" className="text-white hover:text-emerald-300">
                   Login
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/profile" className="text-white hover:text-emerald-300">
+                <Link href="/profile" className="text-white hover:text-emerald-300">
                   Profile
-                </a>
+                </Link>
               </li>
               </ul>
               </nav>

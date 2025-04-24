@@ -11,7 +11,7 @@ export default function Aboutus() {
         backgroundRepeat: 'no-repeat', 
       }}
     >
-      <h1>hi everyone welcome to our game biome keeper</h1>
+      <h1>hi everyone welcome to our game biome keeper Amiel Reyes Amiel</h1>
     </main>
   );
 }

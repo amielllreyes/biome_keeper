@@ -1,15 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Silkscreen } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const silkscreen = Silkscreen({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -25,8 +21,45 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${silkscreen.className} overflow-hidden`}
       >
+        <header className="border-b border-b-emerald-700 p-10 flex items-center gap-3 bg-emerald-700 h-20">
+          <img
+            src="/biomekeeper.png"
+            alt="Biome Keeper Logo"
+            className="w-16 h-16"
+          />
+          <h1 className="text-3xl text-white"><a href="/">Biome Keeper</a></h1>
+          <nav className="ml-auto">
+            <ul className="flex gap-4">
+              <li>
+                <a href="/" className="text-white hover:text-emerald-300">
+                  Home
+                </a>
+              </li>
+              <li>
+                <a href="/download" className="text-white hover:text-emerald-300">
+                  Download
+                </a>
+              </li>
+              <li>
+                <a href="/aboutus" className="text-white hover:text-emerald-300">
+                  About Us
+                </a>
+              </li>
+              <li>
+                <a href="/login" className="text-white hover:text-emerald-300">
+                  Login
+                </a>
+              </li>
+              <li>
+                <a href="/profile" className="text-white hover:text-emerald-300">
+                  Profile
+                </a>
+              </li>
+              </ul>
+              </nav>
+        </header>
         {children}
       </body>
     </html>

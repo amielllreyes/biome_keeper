@@ -23,7 +23,7 @@ export default function SecureEmailLinkAuth() {
   const [isEmailLinkLoginComplete, setIsEmailLinkLoginComplete] = useState(false);
   const router = useRouter();
 
-  // Check if this is a callback from email link
+
   useEffect(() => {
     const authInstance = getAuth();
 
@@ -41,7 +41,7 @@ export default function SecureEmailLinkAuth() {
         signInWithEmailLink(authInstance, email, window.location.href)
           .then(async (result) => {
             window.localStorage.removeItem('emailForSignIn');
-            setIsEmailLinkLoginComplete(true); // ✅ mark that email-link login completed
+            setIsEmailLinkLoginComplete(true); 
             await checkUserRoleAndRedirect(result.user);
           })
           .catch((error) => {
@@ -52,7 +52,7 @@ export default function SecureEmailLinkAuth() {
     }
   }, []);
 
-  // Watch auth state
+ 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user && isEmailLinkLoginComplete) {
@@ -60,7 +60,7 @@ export default function SecureEmailLinkAuth() {
       }
     });
     return () => unsubscribe();
-  }, [isEmailLinkLoginComplete]); // 👈 dependency on isEmailLinkLoginComplete
+  }, [isEmailLinkLoginComplete]); 
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,10 +68,10 @@ export default function SecureEmailLinkAuth() {
     setMessage('');
   
     try {
-      // First verify email and password
+      
       await signInWithEmailAndPassword(auth, email, password);
   
-      // If successful, move to send link step
+     
       setStep('sendLink');
       setMessage('Credentials verified. You can now request the sign-in link.');
     } catch (error: any) {

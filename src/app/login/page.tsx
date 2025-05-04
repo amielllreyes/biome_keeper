@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -22,7 +23,6 @@ export default function SecureEmailLinkAuth() {
   const [step, setStep] = useState<'login' | 'sendLink'>('login');
   const [isEmailLinkLoginComplete, setIsEmailLinkLoginComplete] = useState(false);
   const router = useRouter();
-
 
   useEffect(() => {
     const authInstance = getAuth();
@@ -52,7 +52,6 @@ export default function SecureEmailLinkAuth() {
     }
   }, []);
 
- 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user && isEmailLinkLoginComplete) {
@@ -60,7 +59,7 @@ export default function SecureEmailLinkAuth() {
       }
     });
     return () => unsubscribe();
-  }, [isEmailLinkLoginComplete]); 
+  }, [isEmailLinkLoginComplete]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,10 +67,7 @@ export default function SecureEmailLinkAuth() {
     setMessage('');
   
     try {
-      
       await signInWithEmailAndPassword(auth, email, password);
-  
-     
       setStep('sendLink');
       setMessage('Credentials verified. You can now request the sign-in link.');
     } catch (error: any) {
@@ -84,7 +80,6 @@ export default function SecureEmailLinkAuth() {
       setIsLoading(false);
     }
   };
-  
 
   const handleSendLink = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -134,103 +129,202 @@ export default function SecureEmailLinkAuth() {
 
   return (
     <div className="flex min-h-screen">
-      <div className="hidden md:flex w-1/2 bg-green-700 items-center justify-center text-white">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Welcome to Biome Keeper</h1>
-          <p className="text-lg">Your Adventure in the World of Biomes Begins Here!</p>
-        </div>
-      </div>
+  
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="hidden md:flex w-1/2 bg-gradient-to-br from-green-700 to-green-600 items-center justify-center text-white"
+      >
+        <motion.div
+          initial={{ y: -20 }}
+          animate={{ y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-center p-8"
+        >
+          <motion.h1 
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            className="text-4xl font-bold mb-4"
+          >
+            Welcome to Biome Keeper
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="text-lg"
+          >
+            Your Adventure in the World of Biomes Begins Here!
+          </motion.p>
+        </motion.div>
+      </motion.div>
+
 
       <div className="flex w-full md:w-1/2 justify-center items-center bg-white p-8">
-        {step === 'login' ? (
-          <form onSubmit={handleLogin} className="w-full max-w-md">
-            <h2 className="text-2xl font-bold text-green-700 mb-6">Verify Your Credentials</h2>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={step}
+            initial={{ x: step === 'login' ? 50 : -50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: step === 'login' ? -50 : 50, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="w-full max-w-md"
+          >
+            {step === 'login' ? (
+              <form onSubmit={handleLogin}>
+                <motion.h2 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-2xl font-bold text-green-700 mb-6"
+                >
+                  Verify Your Credentials
+                </motion.h2>
 
-            {message && (
-              <div className="mb-4 p-3 bg-red-100 text-red-800 rounded">
-                {message}
-              </div>
+                {message && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="mb-4 p-3 bg-red-100 text-red-800 rounded"
+                  >
+                    {message}
+                  </motion.div>
+                )}
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <label className="block mb-2 text-sm font-medium text-gray-600">Email</label>
+                  <motion.input
+                    whileFocus={{ scale: 1.01 }}
+                    type="email"
+                    className="w-full px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <label className="block mb-2 text-sm font-medium text-gray-600">Password</label>
+                  <motion.input
+                    whileFocus={{ scale: 1.01 }}
+                    type="password"
+                    className="w-full px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </motion.div>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                  disabled={isLoading}
+                  className={`w-full py-3 px-4 bg-gradient-to-r from-green-600 to-green-500 text-white font-medium rounded-lg shadow-md transition-all ${
+                    isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                >
+                  {isLoading ? (
+                    <span className="flex items-center justify-center">
+                      <motion.span
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="inline-block mr-2"
+                      >
+                        <svg className="w-5 h-5" viewBox="0 0 24 24">
+                          <path fill="currentColor" d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z" />
+                        </svg>
+                      </motion.span>
+                      Verifying...
+                    </span>
+                  ) : 'Verify Credentials'}
+                </motion.button>
+
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                  className="mt-6 text-sm text-center text-gray-600"
+                >
+                  Don't have an account?{' '}
+                  <Link href="/register" className="text-green-600 hover:text-green-800 font-medium transition-colors">
+                    Register
+                  </Link>
+                </motion.p>
+              </form>
+            ) : (
+              <form onSubmit={handleSendLink}>
+                <motion.h2
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-2xl font-bold text-green-700 mb-6"
+                >
+                  Request Sign-In Link
+                </motion.h2>
+
+                {message && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className={`mb-4 p-3 rounded ${
+                      message.includes('sent')
+                        ? 'bg-blue-100 text-blue-800'
+                        : 'bg-yellow-100 text-yellow-800'
+                    }`}
+                  >
+                    {message}
+                  </motion.div>
+                )}
+
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="mb-6 text-gray-600"
+                >
+                  Your credentials have been verified. Click below to receive your secure sign-in link.
+                </motion.p>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                  disabled={isLoading}
+                  className={`w-full py-3 px-4 bg-gradient-to-r from-green-600 to-green-500 text-white font-medium rounded-lg shadow-md transition-all ${
+                    isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                >
+                  {isLoading ? 'Sending...' : 'Send Sign-In Link'}
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="button"
+                  onClick={() => {
+                    setStep('login');
+                    setMessage('');
+                  }}
+                  className="w-full mt-4 py-2 text-green-600 hover:text-green-800 font-medium transition-colors"
+                >
+                  Back to Login
+                </motion.button>
+              </form>
             )}
-
-            <label className="block mb-2 text-sm font-medium text-gray-600">Email</label>
-            <input
-              type="email"
-              className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-green-400"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-
-            <label className="block mb-2 text-sm font-medium text-gray-600">Password</label>
-            <input
-              type="password"
-              className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-green-400"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className={`w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded transition ${
-                isLoading ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-            >
-              {isLoading ? 'Verifying...' : 'Verify Credentials'}
-            </button>
-
-            <p className="mt-6 text-sm text-center">
-              Don't have an account?{' '}
-              <Link href="/register" className="text-green-600 hover:underline">
-                Register
-              </Link>
-            </p>
-          </form>
-        ) : (
-          <form onSubmit={handleSendLink} className="w-full max-w-md">
-            <h2 className="text-2xl font-bold text-green-700 mb-6">Request Sign-In Link</h2>
-
-            {message && (
-              <div
-                className={`mb-4 p-3 rounded ${
-                  message.includes('sent')
-                    ? 'bg-blue-100 text-blue-800'
-                    : 'bg-yellow-100 text-yellow-800'
-                }`}
-              >
-                {message}
-              </div>
-            )}
-
-            <p className="mb-4 text-gray-600">
-              Your credentials have been verified. Click below to receive your secure sign-in link.
-            </p>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className={`w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded transition ${
-                isLoading ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-            >
-              {isLoading ? 'Sending...' : 'Send Sign-In Link'}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setStep('login');
-                setMessage('');
-              }}
-              className="w-full mt-4 text-green-600 hover:underline"
-            >
-              Back to Login
-            </button>
-          </form>
-        )}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );

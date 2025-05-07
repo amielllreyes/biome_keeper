@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
-@media (max-width: 768px) {
-    main {
-      background-size: contain; 
-    }
-  }
-  
-body {
-    overflow: hidden;
-  }
+/* global.css */
+html {
+  scroll-behavior: smooth;
+}
 
+/* Optional: Mobile momentum scroll */
+.scroll-container {
+  -webkit-overflow-scrolling: touch;
+}
 .custom-green {
   color: #3E7B27; 
 }
+
 @keyframes typewriter {
   0% {
     width: 0;
@@ -26,10 +26,7 @@ body {
   display: inline-block;
   overflow: hidden;
   white-space: nowrap;
-  text-align: center; /* Center-align text inside the element */
-  margin: 0 auto; /* Center the element itself */
-  
+  text-align: center;
+  margin: 0 auto;
   animation: typewriter 3s steps(30) 1s forwards; 
 }
-
-  

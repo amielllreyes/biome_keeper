@@ -95,7 +95,7 @@ export default function Download() {
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 group-hover:animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                       </svg>
-                      Download Now (2.4GB)
+                      Download Now
                     </span>
                     <span className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                   </motion.button>
@@ -133,68 +133,10 @@ export default function Download() {
                 )}
               </div>
 
-              {/* Features Grid */}
-              <div className="grid grid-cols-2 gap-4 mb-10">
-                <div className="bg-white/5 backdrop-blur-sm p-4 rounded-xl border border-white/10">
-                  <div className="text-emerald-400 mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                  </div>
-                  <h3 className="font-semibold text-white mb-1">Fast Performance</h3>
-                  <p className="text-xs text-white/60">Optimized for smooth gameplay</p>
-                </div>
-                <div className="bg-white/5 backdrop-blur-sm p-4 rounded-xl border border-white/10">
-                  <div className="text-emerald-400 mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                  </div>
-                  <h3 className="font-semibold text-white mb-1">Secure Download</h3>
-                  <p className="text-xs text-white/60">Virus-free guaranteed</p>
-                </div>
-              </div>
-
-              {/* System Requirements */}
-              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-                <h3 className="text-xl font-semibold text-emerald-400 mb-4 flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-                  </svg>
-                  System Requirements
-                </h3>
-                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                  {[
-                    { icon: '💻', label: 'OS', value: 'Windows 10/11 64-bit' },
-                    { icon: '⚡', label: 'CPU', value: 'Intel i5 or equivalent' },
-                    { icon: '🧠', label: 'RAM', value: '8GB minimum' },
-                    { icon: '🎮', label: 'GPU', value: '2GB VRAM' },
-                    { icon: '💾', label: 'Storage', value: '5GB available' },
-                    { icon: '🌐', label: 'Internet', value: 'For activation' }
-                  ].map((item, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <span className="text-emerald-400 text-lg">{item.icon}</span>
-                      <div>
-                        <div className="text-white/70 text-xs">{item.label}</div>
-                        <div className="text-white font-medium">{item.value}</div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+             
             </motion.div>
           </motion.div>
         </div>
-
-        {/* Footer Note */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="mt-16 text-center text-white/50 text-sm"
-        >
-          <p>By downloading, you agree to our Terms of Service. Biome Keeper © {new Date().getFullYear()}</p>
-        </motion.div>
       </motion.main>
     </div>
   );

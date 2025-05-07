@@ -11,16 +11,25 @@ import {
   isSignInWithEmailLink,
   signInWithEmailLink,
   onAuthStateChanged,
+  sendPasswordResetEmail,
+  User,
 } from 'firebase/auth';
 import { getDoc, doc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 
+type MessageType = {
+  text: string;
+  type: 'error' | 'success' | 'info' | '';
+};
+
+type AuthStep = 'login' | 'sendLink' | 'forgotPassword';
+
 export default function SecureEmailLinkAuth() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState<MessageType>({ text: '', type: '' });
   const [isLoading, setIsLoading] = useState(false);
-  const [step, setStep] = useState<'login' | 'sendLink'>('login');
+  const [step, setStep] = useState<AuthStep>('login');
   const [isEmailLinkLoginComplete, setIsEmailLinkLoginComplete] = useState(false);
   const router = useRouter();
 
@@ -31,21 +40,21 @@ export default function SecureEmailLinkAuth() {
       let email = window.localStorage.getItem('emailForSignIn');
 
       if (!email) {
-        email = window.prompt('Please provide your email for confirmation');
+        email = window.prompt('Please provide your email for confirmation') || '';
       }
 
       if (email) {
         setIsLoading(true);
-        setMessage('Signing you in...');
+        setMessage({ text: 'Signing you in...', type: 'info' });
 
         signInWithEmailLink(authInstance, email, window.location.href)
           .then(async (result) => {
             window.localStorage.removeItem('emailForSignIn');
-            setIsEmailLinkLoginComplete(true); 
+            setIsEmailLinkLoginComplete(true);
             await checkUserRoleAndRedirect(result.user);
           })
           .catch((error) => {
-            setMessage(`Error signing in: ${error.message}`);
+            setMessage({ text: `Error signing in: ${error.message}`, type: 'error' });
             setIsLoading(false);
           });
       }
@@ -59,22 +68,22 @@ export default function SecureEmailLinkAuth() {
       }
     });
     return () => unsubscribe();
-  }, [isEmailLinkLoginComplete]);
+  }, [isEmailLinkLoginComplete, router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setMessage('');
-  
+    setMessage({ text: '', type: '' });
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
       setStep('sendLink');
-      setMessage('Credentials verified. You can now request the sign-in link.');
+      setMessage({ text: 'Credentials verified. You can now request the sign-in link.', type: 'success' });
     } catch (error: any) {
       if (error.code === 'auth/invalid-credential') {
-        setMessage('Login failed: Wrong email or password.');
+        setMessage({ text: 'Login failed: Wrong email or password.', type: 'error' });
       } else {
-        setMessage(`Login failed: ${error.message}`);
+        setMessage({ text: `Login failed: ${error.message}`, type: 'error' });
       }
     } finally {
       setIsLoading(false);
@@ -84,7 +93,7 @@ export default function SecureEmailLinkAuth() {
   const handleSendLink = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setMessage('');
+    setMessage({ text: '', type: '' });
 
     try {
       const actionCodeSettings = {
@@ -94,15 +103,37 @@ export default function SecureEmailLinkAuth() {
 
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
       window.localStorage.setItem('emailForSignIn', email);
-      setMessage(`Sign-in link sent to ${email}. Check your email!`);
+      setMessage({ text: `Sign-in link sent to ${email}. Check your email!`, type: 'success' });
     } catch (error: any) {
-      setMessage(`Error sending link: ${error.message}`);
+      setMessage({ text: `Error sending link: ${error.message}`, type: 'error' });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const checkUserRoleAndRedirect = async (user: any) => {
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setMessage({ text: '', type: '' });
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setMessage({ 
+        text: `Password reset email sent to ${email}. Check your inbox!`, 
+        type: 'success' 
+      });
+      setTimeout(() => setStep('login'), 3000);
+    } catch (error: any) {
+      setMessage({ 
+        text: `Error sending reset email: ${error.message}`, 
+        type: 'error' 
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const checkUserRoleAndRedirect = async (user: User) => {
     try {
       const userRef = doc(db, 'users', user.uid);
       const userSnap = await getDoc(userRef);
@@ -123,13 +154,26 @@ export default function SecureEmailLinkAuth() {
         router.push('/congratulations');
       }
     } catch (error) {
-      setMessage('Failed to fetch user data');
+      setMessage({ text: 'Failed to fetch user data', type: 'error' });
+    }
+  };
+
+  const getMessageClass = (type: string) => {
+    switch (type) {
+      case 'error':
+        return 'bg-red-100 text-red-800';
+      case 'success':
+        return 'bg-green-100 text-green-800';
+      case 'info':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   return (
     <div className="flex min-h-screen">
-  
+      {/* Left Side - Branding */}
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -160,7 +204,7 @@ export default function SecureEmailLinkAuth() {
         </motion.div>
       </motion.div>
 
-
+      {/* Right Side - Auth Forms */}
       <div className="flex w-full md:w-1/2 justify-center items-center bg-white p-8">
         <AnimatePresence mode="wait">
           <motion.div
@@ -182,13 +226,13 @@ export default function SecureEmailLinkAuth() {
                   Verify Your Credentials
                 </motion.h2>
 
-                {message && (
+                {message.text && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
-                    className="mb-4 p-3 bg-red-100 text-red-800 rounded"
+                    className={`mb-4 p-3 rounded ${getMessageClass(message.type)}`}
                   >
-                    {message}
+                    {message.text}
                   </motion.div>
                 )}
 
@@ -225,6 +269,18 @@ export default function SecureEmailLinkAuth() {
                     required
                   />
                 </motion.div>
+
+                <div className="flex justify-between items-center mb-4">
+                  <motion.button
+                    type="button"
+                    onClick={() => setStep('forgotPassword')}
+                    className="text-sm text-green-600 hover:text-green-800 font-medium transition-colors"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    Forgot password?
+                  </motion.button>
+                </div>
 
                 <motion.button
                   whileHover={{ scale: 1.02 }}
@@ -263,7 +319,7 @@ export default function SecureEmailLinkAuth() {
                   </Link>
                 </motion.p>
               </form>
-            ) : (
+            ) : step === 'sendLink' ? (
               <form onSubmit={handleSendLink}>
                 <motion.h2
                   initial={{ opacity: 0 }}
@@ -274,17 +330,13 @@ export default function SecureEmailLinkAuth() {
                   Request Sign-In Link
                 </motion.h2>
 
-                {message && (
+                {message.text && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
-                    className={`mb-4 p-3 rounded ${
-                      message.includes('sent')
-                        ? 'bg-blue-100 text-blue-800'
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}
+                    className={`mb-4 p-3 rounded ${getMessageClass(message.type)}`}
                   >
-                    {message}
+                    {message.text}
                   </motion.div>
                 )}
 
@@ -315,7 +367,80 @@ export default function SecureEmailLinkAuth() {
                   type="button"
                   onClick={() => {
                     setStep('login');
-                    setMessage('');
+                    setMessage({ text: '', type: '' });
+                  }}
+                  className="w-full mt-4 py-2 text-green-600 hover:text-green-800 font-medium transition-colors"
+                >
+                  Back to Login
+                </motion.button>
+              </form>
+            ) : (
+              /* Forgot Password Form */
+              <form onSubmit={handleForgotPassword}>
+                <motion.h2
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-2xl font-bold text-green-700 mb-6"
+                >
+                  Reset Your Password
+                </motion.h2>
+
+                {message.text && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className={`mb-4 p-3 rounded ${getMessageClass(message.type)}`}
+                  >
+                    {message.text}
+                  </motion.div>
+                )}
+
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="mb-6 text-gray-600"
+                >
+                  Enter your email address and we'll send you a link to reset your password.
+                </motion.p>
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <label className="block mb-2 text-sm font-medium text-gray-600">Email</label>
+                  <motion.input
+                    whileFocus={{ scale: 1.01 }}
+                    type="email"
+                    className="w-full px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </motion.div>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                  disabled={isLoading}
+                  className={`w-full py-3 px-4 bg-gradient-to-r from-green-600 to-green-500 text-white font-medium rounded-lg shadow-md transition-all ${
+                    isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                >
+                  {isLoading ? 'Sending...' : 'Send Reset Link'}
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="button"
+                  onClick={() => {
+                    setStep('login');
+                    setMessage({ text: '', type: '' });
                   }}
                   className="w-full mt-4 py-2 text-green-600 hover:text-green-800 font-medium transition-colors"
                 >

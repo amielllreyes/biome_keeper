@@ -6,13 +6,12 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
-import { FiUser, FiMail, FiLock, FiBook, FiArrowRight } from 'react-icons/fi';
+import { FiUser, FiMail, FiLock, FiArrowRight } from 'react-icons/fi';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [role, setRole] = useState('student');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
@@ -29,7 +28,7 @@ export default function RegisterPage() {
       await setDoc(doc(db, 'users', user.uid), {
         name,
         email,
-        role,
+        role: 'student',
         createdAt: new Date()
       });
 
@@ -55,7 +54,6 @@ export default function RegisterPage() {
           onSubmit={handleRegister}
           className="bg-white rounded-xl shadow-lg overflow-hidden border border-green-100"
         >
- 
           <motion.div
             initial={{ backgroundPosition: '0% 50%' }}
             animate={{ backgroundPosition: '100% 50%' }}
@@ -89,7 +87,6 @@ export default function RegisterPage() {
             </motion.p>
           </motion.div>
 
-
           <div className="p-6">
             {error && (
               <motion.div
@@ -101,7 +98,6 @@ export default function RegisterPage() {
               </motion.div>
             )}
 
-  
             <motion.div
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
@@ -124,7 +120,6 @@ export default function RegisterPage() {
                 required
               />
             </motion.div>
-
 
             <motion.div
               initial={{ opacity: 0, x: -10 }}
@@ -150,12 +145,11 @@ export default function RegisterPage() {
               />
             </motion.div>
 
-
             <motion.div
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.6 }}
-              className="mb-4"
+              className="mb-6"
             >
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <FiLock className="inline mr-2" />
@@ -174,32 +168,6 @@ export default function RegisterPage() {
                 required
               />
             </motion.div>
-
-
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.7 }}
-              className="mb-6"
-            >
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <FiBook className="inline mr-2" />
-                Select Role
-              </label>
-              <motion.select
-                whileFocus={{ 
-                  scale: 1.01,
-                  boxShadow: '0 0 0 2px rgba(74, 222, 128, 0.5)'
-                }}
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none transition-all appearance-none"
-              >
-                <option value="student">Student</option>
-                <option value="teacher">Teacher</option>
-              </motion.select>
-            </motion.div>
-
 
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -230,7 +198,6 @@ export default function RegisterPage() {
               )}
             </motion.button>
           </div>
-
 
           <motion.div
             initial={{ opacity: 0 }}

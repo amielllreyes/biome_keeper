@@ -20,8 +20,8 @@ export default function Download() {
         
         // Create a temporary anchor element to trigger the download
         const link = document.createElement('a');
-        link.href = '/BiomeKeeper-20250512T223132Z-001.zip'; // Path to your zip file
-        link.download = 'BiomeKeeper.zip'; // Suggested filename
+        link.href = '/BiomeKeeper-20250512T223132Z-001.7z'; // Path to your zip file
+        link.download = 'BiomeKeeper.7z'; // Suggested filename
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

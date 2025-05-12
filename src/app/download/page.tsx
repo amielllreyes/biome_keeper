@@ -17,8 +17,18 @@ export default function Download() {
       if (currentProgress >= 100) {
         currentProgress = 100;
         clearInterval(interval);
+        
+        // Create a temporary anchor element to trigger the download
+        const link = document.createElement('a');
+        link.href = '/BiomeKeeper-20250512T223132Z-001.zip'; // Path to your zip file
+        link.download = 'BiomeKeeper.zip'; // Suggested filename
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Redirect after download completes
         setTimeout(() => {
-          window.location.href = '/BiomeKeeper.zip';
+          window.location.href = '';
         }, 500);
       }
       setProgress(currentProgress);
@@ -132,8 +142,6 @@ export default function Download() {
                   </div>
                 )}
               </div>
-
-             
             </motion.div>
           </motion.div>
         </div>

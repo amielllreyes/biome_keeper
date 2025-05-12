@@ -10,9 +10,6 @@ import { doc, getDoc } from 'firebase/firestore';
 interface UserData {
   name: string;
   email: string;
-  role: string;
-  level?: number;
-  energy?: number;
   cropStats?: Record<string, string>;
   completedMissions?: string[];
 }
@@ -91,47 +88,11 @@ export default function ProfilePage() {
                 {userData.email}
               </p>
             </div>
-            <div className="bg-white/20 px-3 py-1 rounded-full text-sm font-medium">
-              {userData.role}
-            </div>
           </div>
         </div>
 
         <div className="p-6 md:p-8 space-y-8">
-          {/* Game Stats Section */}
-          <motion.section 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="bg-emerald-50/50 p-5 rounded-lg border border-emerald-100"
-          >
-            <h2 className="text-xl font-semibold text-emerald-800 mb-4 flex items-center">
-              <svg className="w-5 h-5 mr-2 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-              </svg>
-              Game Statistics
-            </h2>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white p-3 rounded-lg shadow-sm">
-                <p className="text-sm text-gray-500">Level</p>
-                <p className="text-xl font-bold text-emerald-700">{userData.level ?? '1'}</p>
-              </div>
-              <div className="bg-white p-3 rounded-lg shadow-sm">
-                <p className="text-sm text-gray-500">Energy</p>
-                <div className="flex items-center">
-                  <div className="w-full bg-gray-200 rounded-full h-2.5 mr-2">
-                    <div 
-                      className="bg-emerald-600 h-2.5 rounded-full" 
-                      style={{ width: `${userData.energy || 0}%` }}
-                    ></div>
-                  </div>
-                  <span className="text-sm font-medium text-emerald-700">{userData.energy || 0}%</span>
-                </div>
-              </div>
-            </div>
-          </motion.section>
+
 
           {/* Crop Progress Section */}
           <motion.section 

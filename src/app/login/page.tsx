@@ -1,3 +1,6 @@
+// Replace all green-xxx and green-xxx color classes with blue-900, blue-800, blue-700, blue-600, blue-500, blue-400, etc. 
+// Also update the gradient from-green-700 to-blue-900, from-green-600 to-blue-800, etc.
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -163,7 +166,7 @@ export default function SecureEmailLinkAuth() {
       case 'error':
         return 'bg-red-100 text-red-800';
       case 'success':
-        return 'bg-green-100 text-green-800';
+        return 'bg-blue-100 text-blue-800';
       case 'info':
         return 'bg-blue-100 text-blue-800';
       default:
@@ -178,7 +181,7 @@ export default function SecureEmailLinkAuth() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="hidden md:flex w-1/2 bg-gradient-to-br from-green-700 to-green-600 items-center justify-center text-white"
+        className="hidden md:flex w-1/2 bg-gradient-to-br from-blue-900 to-blue-800 items-center justify-center text-white"
       >
         <motion.div
           initial={{ y: -20 }}
@@ -191,7 +194,7 @@ export default function SecureEmailLinkAuth() {
             animate={{ scale: 1 }}
             className="text-4xl font-bold mb-4"
           >
-            Welcome to Biome Keeper
+            Welcome to CYBERIA
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
@@ -221,7 +224,7 @@ export default function SecureEmailLinkAuth() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="text-2xl font-bold text-green-700 mb-6"
+                  className="text-2xl font-bold text-blue-900 mb-6"
                 >
                   Verify Your Credentials
                 </motion.h2>
@@ -245,7 +248,7 @@ export default function SecureEmailLinkAuth() {
                   <motion.input
                     whileFocus={{ scale: 1.01 }}
                     type="email"
-                    className="w-full px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
                     placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -262,7 +265,7 @@ export default function SecureEmailLinkAuth() {
                   <motion.input
                     whileFocus={{ scale: 1.01 }}
                     type="password"
-                    className="w-full px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
                     placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -274,7 +277,7 @@ export default function SecureEmailLinkAuth() {
                   <motion.button
                     type="button"
                     onClick={() => setStep('forgotPassword')}
-                    className="text-sm text-green-600 hover:text-green-800 font-medium transition-colors"
+                    className="text-sm text-blue-800 hover:text-blue-900 font-medium transition-colors"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
@@ -287,7 +290,7 @@ export default function SecureEmailLinkAuth() {
                   whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={isLoading}
-                  className={`w-full py-3 px-4 bg-gradient-to-r from-green-600 to-green-500 text-white font-medium rounded-lg shadow-md transition-all ${
+                  className={`w-full py-3 px-4 bg-gradient-to-r from-blue-900 to-blue-800 text-white font-medium rounded-lg shadow-md transition-all ${
                     isLoading ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
                 >
@@ -314,7 +317,7 @@ export default function SecureEmailLinkAuth() {
                   className="mt-6 text-sm text-center text-gray-600"
                 >
                   Don't have an account?{' '}
-                  <Link href="/register" className="text-green-600 hover:text-green-800 font-medium transition-colors">
+                  <Link href="/register" className="text-blue-800 hover:text-blue-900 font-medium transition-colors">
                     Register
                   </Link>
                 </motion.p>
@@ -325,7 +328,7 @@ export default function SecureEmailLinkAuth() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="text-2xl font-bold text-green-700 mb-6"
+                  className="text-2xl font-bold text-blue-900 mb-6"
                 >
                   Request Sign-In Link
                 </motion.h2>
@@ -354,7 +357,7 @@ export default function SecureEmailLinkAuth() {
                   whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={isLoading}
-                  className={`w-full py-3 px-4 bg-gradient-to-r from-green-600 to-green-500 text-white font-medium rounded-lg shadow-md transition-all ${
+                  className={`w-full py-3 px-4 bg-gradient-to-r from-blue-900 to-blue-800 text-white font-medium rounded-lg shadow-md transition-all ${
                     isLoading ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
                 >
@@ -369,7 +372,7 @@ export default function SecureEmailLinkAuth() {
                     setStep('login');
                     setMessage({ text: '', type: '' });
                   }}
-                  className="w-full mt-4 py-2 text-green-600 hover:text-green-800 font-medium transition-colors"
+                  className="w-full mt-4 py-2 text-blue-800 hover:text-blue-900 font-medium transition-colors"
                 >
                   Back to Login
                 </motion.button>
@@ -381,7 +384,7 @@ export default function SecureEmailLinkAuth() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="text-2xl font-bold text-green-700 mb-6"
+                  className="text-2xl font-bold text-blue-900 mb-6"
                 >
                   Reset Your Password
                 </motion.h2>
@@ -414,7 +417,7 @@ export default function SecureEmailLinkAuth() {
                   <motion.input
                     whileFocus={{ scale: 1.01 }}
                     type="email"
-                    className="w-full px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition-all"
+                    className="w-full px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
                     placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -427,7 +430,7 @@ export default function SecureEmailLinkAuth() {
                   whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={isLoading}
-                  className={`w-full py-3 px-4 bg-gradient-to-r from-green-600 to-green-500 text-white font-medium rounded-lg shadow-md transition-all ${
+                  className={`w-full py-3 px-4 bg-gradient-to-r from-blue-900 to-blue-800 text-white font-medium rounded-lg shadow-md transition-all ${
                     isLoading ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
                 >
@@ -442,7 +445,7 @@ export default function SecureEmailLinkAuth() {
                     setStep('login');
                     setMessage({ text: '', type: '' });
                   }}
-                  className="w-full mt-4 py-2 text-green-600 hover:text-green-800 font-medium transition-colors"
+                  className="w-full mt-4 py-2 text-blue-800 hover:text-blue-900 font-medium transition-colors"
                 >
                   Back to Login
                 </motion.button>

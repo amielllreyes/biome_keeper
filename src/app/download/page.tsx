@@ -36,7 +36,7 @@ export default function Download() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-900 to-emerald-900">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 to-blue-800">
       <motion.main
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -52,9 +52,9 @@ export default function Download() {
             className="w-full lg:w-1/2 flex justify-center"
           >
             <div className="relative group">
-              <div className="absolute -inset-2 bg-emerald-500/30 rounded-2xl blur-lg group-hover:opacity-75 transition-opacity duration-300"></div>
+              <div className="absolute -inset-2 bg-blue-500/30 rounded-2xl blur-lg group-hover:opacity-75 transition-opacity duration-300"></div>
               <Image
-                src="/biomekeeper.png"
+                src="/Cyberia.png"
                 alt="Biome Keeper Game Preview"
                 width={500}
                 height={500}
@@ -63,7 +63,7 @@ export default function Download() {
               />
               <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/80 to-transparent rounded-b-2xl"></div>
               <div className="absolute bottom-6 left-0 right-0 text-center">
-                <span className="inline-block px-3 py-1 bg-emerald-600/90 text-white text-sm font-medium rounded-full backdrop-blur-sm">
+                <span className="inline-block px-3 py-1 bg-blue-600/90 text-white text-sm font-medium rounded-full backdrop-blur-sm">
                   Ready to Play
                 </span>
               </div>
@@ -83,7 +83,7 @@ export default function Download() {
               transition={{ type: "spring", stiffness: 300 }}
             >
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-300">
                   Biome Keeper
                 </span> <br />
                 Awaits Your Journey
@@ -99,7 +99,7 @@ export default function Download() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleDownload}
-                    className="relative w-full max-w-md mx-auto overflow-hidden px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold rounded-xl text-lg shadow-xl hover:shadow-emerald-500/40 transition-all duration-300 group"
+                    className="relative w-full max-w-md mx-auto overflow-hidden px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl text-lg shadow-xl hover:shadow-blue-500/40 transition-all duration-300 group"
                   >
                     <span className="relative z-10 flex items-center justify-center gap-3">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 group-hover:animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -107,7 +107,7 @@ export default function Download() {
                       </svg>
                       Download Now
                     </span>
-                    <span className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                    <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                   </motion.button>
                 ) : (
                   <div className="w-full max-w-md mx-auto space-y-4">
@@ -116,7 +116,7 @@ export default function Download() {
                         initial={{ width: 0 }}
                         animate={{ width: `${progress}%` }}
                         transition={{ duration: 0.3 }}
-                        className="absolute h-full bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.6)]"
+                        className="absolute h-full bg-gradient-to-r from-blue-400 to-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.6)]"
                       />
                       <div className="absolute inset-0 flex items-center justify-center">
                         <span className="text-xs font-medium text-white">
@@ -128,7 +128,7 @@ export default function Download() {
                     <motion.p
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className={`text-center ${progress < 100 ? 'text-white/80' : 'text-emerald-400 font-medium'}`}
+                      className={`text-center ${progress < 100 ? 'text-white/80' : 'text-blue-400 font-medium'}`}
                     >
                       {progress < 100 ? (
                         <>

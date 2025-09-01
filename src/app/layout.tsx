@@ -24,7 +24,7 @@ export default function RootLayout({
       <body
         className={`${silkscreen.className} overflow-hidden`}
       >
-        <header className="border-b border-b-emerald-700 p-10 flex items-center gap-3 bg-emerald-700 h-20">
+        <header className="border-b border-b-blue-900 p-10 flex items-center gap-3 bg-blue-900 h-20">
           <img
             src="/biomekeeper.png"
             alt="Biome Keeper Logo"
@@ -34,32 +34,32 @@ export default function RootLayout({
           <nav className="ml-auto">
             <ul className="flex gap-4">
               <li>
-                <Link href="/" className="text-white hover:text-emerald-300">
-                  Home
-                </Link>
+          <Link href="/" className="text-white hover:text-blue-300">
+            Home
+          </Link>
               </li>
               <li>
-                <Link href="/download" className="text-white hover:text-emerald-300">
-                  Download
-                </Link>
+          <Link href="/download" className="text-white hover:text-blue-300">
+            Download
+          </Link>
               </li>
               <li>
-                <Link href="/aboutus" className="text-white hover:text-emerald-300">
-                  About Us
-                </Link>
+          <Link href="/aboutus" className="text-white hover:text-blue-300">
+            About Us
+          </Link>
               </li>
               <li>
-                <Link href="/login" className="text-white hover:text-emerald-300">
-                  Login
-                </Link>
+          <Link href="/login" className="text-white hover:text-blue-300">
+            Login
+          </Link>
               </li>
               <li>
-                <Link href="/profile" className="text-white hover:text-emerald-300">
-                  Profile
-                </Link>
+          <Link href="/profile" className="text-white hover:text-blue-300">
+            Profile
+          </Link>
               </li>
-              </ul>
-              </nav>
+            </ul>
+          </nav>
         </header>
         {children}
       </body>

@@ -6,12 +6,11 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
-import { FiUser, FiMail, FiLock, FiArrowRight } from 'react-icons/fi';
+import { FiMail, FiLock, FiArrowRight } from 'react-icons/fi';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
@@ -25,14 +24,17 @@ export default function RegisterPage() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
+      // Auto-generate username from email
+      const username = email.split('@')[0] || 'Player';
+
       await setDoc(doc(db, 'users', user.uid), {
-        name,
+        name: username,
         email,
-        role: 'student',
+        role: 'user', // Always set as user
         createdAt: new Date()
       });
 
-      router.push('/login');
+      router.push('/profile');
     } catch (error: any) {
       setError(error.message.includes('email-already-in-use') 
         ? 'Email already in use' 
@@ -75,7 +77,7 @@ export default function RegisterPage() {
               transition={{ delay: 0.2 }}
               className="text-2xl font-bold text-white"
             >
-              Create an Account
+              Create Account
             </motion.h2>
             <motion.p
               initial={{ opacity: 0 }}
@@ -83,7 +85,7 @@ export default function RegisterPage() {
               transition={{ delay: 0.3 }}
               className="text-green-100 mt-1"
             >
-              Join our learning community
+              Join Biome Keeper Adventure
             </motion.p>
           </motion.div>
 
@@ -102,29 +104,6 @@ export default function RegisterPage() {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
-              className="mb-4"
-            >
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <FiUser className="inline mr-2" />
-                Full Name
-              </label>
-              <motion.input
-                whileFocus={{ 
-                  scale: 1.01,
-                  boxShadow: '0 0 0 2px rgba(74, 222, 128, 0.5)'
-                }}
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none transition-all"
-                required
-              />
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 }}
               className="mb-4"
             >
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -148,7 +127,7 @@ export default function RegisterPage() {
             <motion.div
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.6 }}
+              transition={{ delay: 0.5 }}
               className="mb-6"
             >
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -193,7 +172,7 @@ export default function RegisterPage() {
                 </span>
               ) : (
                 <span className="flex items-center justify-center">
-                  Register <FiArrowRight className="ml-2" />
+                  Create Account <FiArrowRight className="ml-2" />
                 </span>
               )}
             </motion.button>
@@ -202,7 +181,7 @@ export default function RegisterPage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.9 }}
+            transition={{ delay: 0.7 }}
             className="px-6 py-4 bg-gray-50 text-center"
           >
             <p className="text-sm text-gray-600">

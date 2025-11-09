@@ -76,7 +76,7 @@ export default function AdminLoginPage() {
               ease: 'linear'
             }}
             style={{
-              backgroundImage: 'linear-gradient(45deg, #16a34a, #22c55e, #4ade80, #86efac)',
+              backgroundImage: 'linear-gradient(45deg, #251d8fff, #0f2077ff, #1b0c67ff, #2b1676ff)',
               backgroundSize: '300% 300%'
             }}
             className="p-6 text-center"
@@ -129,7 +129,7 @@ export default function AdminLoginPage() {
               <motion.input
                 whileFocus={{ 
                   scale: 1.01,
-                  boxShadow: '0 0 0 2px rgba(74, 222, 128, 0.5)'
+                  boxShadow: '0 0 0 2px rgba(36, 103, 170, 0.5)'
                 }}
                 type="email"
                 className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none transition-all"
@@ -152,7 +152,7 @@ export default function AdminLoginPage() {
               <motion.input
                 whileFocus={{ 
                   scale: 1.01,
-                  boxShadow: '0 0 0 2px rgba(74, 222, 128, 0.5)'
+                  boxShadow: '0 0 0 2px rgba(41, 35, 146, 0.5)'
                 }}
                 type="password"
                 className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none transition-all"
@@ -168,7 +168,7 @@ export default function AdminLoginPage() {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={isLoading}
-              className={`w-full py-3 px-4 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-medium rounded-lg shadow transition-all duration-300 ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
+              className={`w-full py-3 px-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-700 hover:to-blue-600 text-white font-medium rounded-lg shadow transition-all duration-300 ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
             >
               {isLoading ? (
                 <motion.span 
@@ -191,7 +191,7 @@ export default function AdminLoginPage() {
               transition={{ delay: 0.8 }}
               className="mt-6 text-center text-sm text-gray-500"
             >
-              <a href="#" className="text-green-600 hover:text-green-800 font-medium transition-colors">
+              <a href="#" className="text-blue-600 hover:text-blue-800 font-medium transition-colors">
                 Forgot password?
               </a>
             </motion.div>

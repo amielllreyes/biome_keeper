@@ -25,7 +25,7 @@ export default function Admin() {
   const [stats, setStats] = useState({
     totalUsers: 0,
     admins: 0,
-    students: 0
+    users: 0
   });
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export default function Admin() {
     try {
       const querySnapshot = await getDocs(collection(db, 'users'));
       const usersData: UserData[] = [];
-      let admins = 0, students = 0; 
+      let admins = 0, regularUsers = 0;
 
       querySnapshot.forEach((doc) => {
         const data = doc.data();
@@ -78,16 +78,15 @@ export default function Admin() {
           role: data.role,
         });
 
-  
         if (data.role === 'admin') admins++;
-        else if (data.role === 'student') students++;
+        else if (data.role === 'user') regularUsers++;
       });
 
       setUsers(usersData);
       setStats({
         totalUsers: usersData.length,
         admins,
-        students 
+        users: regularUsers
       });
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -105,7 +104,6 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 p-6">
-
       <header className="flex justify-between items-center mb-8">
         <motion.h1 
           initial={{ opacity: 0, y: -20 }}
@@ -124,7 +122,6 @@ export default function Admin() {
           <FiLogOut /> Logout
         </motion.button>
       </header>
-
 
       <motion.div 
         initial={{ opacity: 0 }}
@@ -145,14 +142,12 @@ export default function Admin() {
           color="bg-purple-100 text-purple-700"
         />
         <StatCard 
-          icon={<FiUsers className="text-2xl" />}
-          title="Students"
-          value={stats.students}
+          icon={<FiUser className="text-2xl" />}
+          title="Players"
+          value={stats.users}
           color="bg-green-100 text-green-700"
         />
-  
       </motion.div>
-
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -184,7 +179,7 @@ export default function Admin() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 py-1 text-xs rounded-full capitalize ${
                         user.role === 'admin' ? 'bg-purple-100 text-purple-800' :
-                        'bg-green-100 text-green-800'  
+                        'bg-blue-100 text-blue-800'
                       }`}>
                         {user.role}
                       </span>
@@ -196,7 +191,6 @@ export default function Admin() {
           </table>
         </div>
       </motion.div>
-
 
       {showLogoutConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -227,7 +221,6 @@ export default function Admin() {
     </div>
   );
 }
-
 
 function StatCard({ icon, title, value, color }: { icon: React.ReactNode, title: string, value: number, color: string }) {
   return (

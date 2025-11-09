@@ -1,9 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true, 
-  },
+  // Empty config - no eslint property
 };
 
 export default nextConfig;

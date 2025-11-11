@@ -32,9 +32,9 @@ export default function RootLayout({
           {/* Logo + Title */}
           <div className="flex items-center gap-3">
             <img
-              src="/biomekeeper.png"
+              src="/CyberiaLogo.png"
               alt="Biome Keeper Logo"
-              className="w-12 h-12 sm:w-16 sm:h-16"
+              className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover"
             />
             <h1 className="text-2xl sm:text-3xl text-white">
               <Link href="/" onClick={closeMenu}>Biome Keeper</Link>
@@ -44,7 +44,7 @@ export default function RootLayout({
           {/* Desktop Nav */}
           <nav className="hidden md:flex ml-auto">
             <ul className="flex gap-4">
-              {['Home', 'Download', 'About Us', 'Login', 'Profile'].map((item) => (
+              {['Home', 'About Us', 'Login', 'Profile'].map((item) => (
                 <li key={item}>
                   <Link
                     href={item === 'Home' ? '/' : `/${item.replace(/\s+/g, '').toLowerCase()}`}
@@ -86,7 +86,7 @@ export default function RootLayout({
             ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
           >
             <nav className="flex flex-col items-center justify-center h-full gap-8 text-2xl text-white">
-              {['Home', 'Download', 'About Us', 'Login', 'Profile'].map((item) => (
+              {['Home', 'About Us', 'Login', 'Profile'].map((item) => (
                 <Link
                   key={item}
                   href={item === 'Home' ? '/' : `/${item.replace(/\s+/g, '').toLowerCase()}`}

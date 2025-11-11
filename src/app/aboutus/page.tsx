@@ -1,201 +1,103 @@
-'use client';
+"use client";
+import { useEffect } from "react";
 
-import { motion } from "framer-motion";
-import Image from "next/image";
+export default function Home() {
+  // Smooth scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      const aboutSection = document.getElementById("about");
+      if (window.scrollY > window.innerHeight * 0.3 && aboutSection) {
+        aboutSection.classList.add("fade-in");
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-export default function AboutUs() {
   return (
-    <div className="relative flex flex-col min-h-[calc(100vh-160px)] overflow-hidden">
-
-      {/* Enhanced Background */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/80 to-indigo-900/60"></div>
-        <Image
-          src="/Cyberia.png"
-          alt="Background"
-          fill
-          className="object-cover"
-          priority
-          quality={100}
-        />
-        <div className="absolute inset-0 bg-noise opacity-10"></div>
-      </div>
-
-      {/* Floating decorative elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        {[...Array(8)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full bg-blue-400/20"
-            initial={{
-              x: Math.random() * 100,
-              y: Math.random() * 100,
-              width: Math.random() * 300 + 100,
-              height: Math.random() * 300 + 100,
-              opacity: 0.3
-            }}
-            animate={{
-              x: [null, Math.random() * 100 - 50],
-              y: [null, Math.random() * 100 - 50],
-              opacity: [0.3, 0.4, 0.3]
-            }}
-            transition={{
-              duration: Math.random() * 10 + 10,
-              repeat: Infinity,
-              repeatType: "reverse",
-              ease: "easeInOut"
-            }}
-          />
-        ))}
-      </div>
-
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="flex-1 flex items-center justify-center px-4 py-8"
+    <main className="flex flex-col items-center justify-center min-h-screen bg-black text-white overflow-x-hidden">
+      {/* HERO SECTION */}
+      <section
+        className="flex flex-col items-center justify-center relative w-full min-h-screen text-center px-6 sm:px-10 md:px-20 bg-cover bg-center"
+        style={{
+          backgroundImage: "url('/Cyberia.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center center",
+        }}
       >
+        {/* Overlay for readability */}
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-0"></div>
 
-        <div className="w-full max-w-4xl bg-white/90 backdrop-blur-xl rounded-xl shadow-2xl shadow-blue-900/20 border border-white/30 my-8 max-h-[80vh] overflow-y-auto relative">
-          
-          {/* Glow effect */}
-          <div className="absolute -inset-2 bg-blue-500/10 rounded-xl blur-xl -z-10"></div>
+        {/* Content */}
+        <div className="relative z-10 max-w-4xl">
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-cyan-300 mb-4 drop-shadow-[0_0_20px_rgba(34,211,238,0.7)] animate-fadeIn">
+            Welcome to <span className="text-white">CYBERIA</span>
+          </h1>
 
-          {/* Header with improved gradient */}
-          <div className="bg-gradient-to-r from-blue-800 to-indigo-700 p-5 text-center sticky top-0 z-10 border-b border-blue-500/30">
-            <motion.div 
-              initial={{ scale: 0.9, y: -10 }}
-              animate={{ scale: 1, y: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="space-y-2"
-            >
-              <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
-                About <span className="text-blue-100 font-extrabold">CYBERIA</span>
-              </h1>
-              <div className="w-20 h-1 bg-blue-300/70 mx-auto rounded-full"></div>
-            </motion.div>
-          </div>
+          <p className="text-base sm:text-lg md:text-xl leading-relaxed text-cyan-50 mt-4 bg-white/10 border border-cyan-400/30 rounded-2xl p-6 sm:p-8 backdrop-blur-lg shadow-[0_0_25px_rgba(34,211,238,0.25)]">
+            Step into a <span className="text-cyan-300 font-semibold">3D interactive world</span> where learning meets
+            adventure. <span className="font-semibold">Cyberia</span> is a game designed to teach
+            <span className="italic"> digital literacy</span> — helping players identify phishing emails, avoid scams, 
+            and make responsible decisions in the online world. Through exploration and decision-making, players gain 
+            awareness of the threats that exist in the digital landscape.
+          </p>
 
-          {/* Content with better spacing and typography */}
-          <div className="p-6 sm:p-8 md:p-10 space-y-6 sm:space-y-8">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="space-y-6"
-            >
-              <p className="text-lg sm:text-xl md:text-2xl text-gray-800 leading-relaxed font-medium">
-                <strong className="text-blue-800 font-bold">Biome Keeper</strong> is an immersive 3D educational simulation game based on the{" "}
-                <span className="text-blue-900 font-semibold italic">K to 12 Aquaculture Exploratory Course</span>.
-              </p>
+          <p className="text-cyan-100 mt-6 text-lg italic opacity-90">
+            “Empowering the next generation to think critically and stay safe online.”
+          </p>
 
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.4 }}
-                className="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-700 p-5 sm:p-6 rounded-r-lg shadow-sm"
-              >
-                <h3 className="text-lg font-semibold text-blue-900 mb-3 flex items-center">
-                  <svg className="w-5 h-5 mr-2 text-blue-700" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
-                  </svg>
-                  Our game transforms important topics like:
-                </h3>
-                <ul className="space-y-3 pl-2">
-                  {[
-                    "Crop maintenance and optimization",
-                    "Integrated pest management strategies",
-                    "Proper use of fishery tools and equipment",
-                    "Safety protocols for farm operations",
-                    "Sustainable and eco-friendly farming practices"
-                  ].map((item, index) => (
-                    <motion.li 
-                      key={index}
-                      initial={{ x: -10, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      transition={{ delay: 0.5 + index * 0.1 }}
-                      className="flex items-start text-gray-700 text-base sm:text-lg"
-                    >
-                      <span className="inline-flex items-center justify-center w-5 h-5 mr-2 mt-0.5">
-                        <svg className="w-4 h-4 text-blue-700" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
-                      </span>
-                      {item}
-                    </motion.li>
-                  ))}
-                </ul>
-              </motion.div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1 }}
-                  className="bg-white p-5 rounded-lg border border-blue-100 shadow-sm"
-                >
-                  <h3 className="text-lg font-semibold text-blue-800 mb-3">Engaging Learning</h3>
-                  <p className="text-gray-700">
-                    Our 3D environment makes complex concepts tangible through interactive simulations and real-world scenarios.
-                  </p>
-                </motion.div>
-                
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.2 }}
-                  className="bg-white p-5 rounded-lg border border-blue-100 shadow-sm"
-                >
-                  <h3 className="text-lg font-semibold text-blue-800 mb-3">Curriculum-Aligned</h3>
-                  <p className="text-gray-700">
-                    Designed specifically to complement the K to 12 Aquaculture curriculum with accurate, up-to-date content.
-                  </p>
-                </motion.div>
-              </div>
-
-              <motion.p 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.4 }}
-                className="text-lg sm:text-xl text-gray-800 mt-6 leading-relaxed text-center bg-blue-50/50 p-5 rounded-lg border border-blue-100"
-              >
-                <span className="text-blue-700 font-semibold">Experience learning like never before</span> with our immersive adventure that makes education engaging, interactive, and fun!
-              </motion.p>
-            </motion.div>
-          </div>
-
-          {/* Footer with improved design */}
-          <div className="sticky bottom-0 bg-gradient-to-b from-white/90 to-white/70 border-t border-gray-200/50 p-4 text-center backdrop-blur-md">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.6 }}
-              className="space-y-2"
-            >
-              <p className="text-sm sm:text-base text-gray-600 font-medium">
-                Thank you for your support! We hope you enjoy your journey in the world of biomes!
-              </p>
-              <div className="flex justify-center space-x-2">
-                {[...Array(5)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    className="w-2 h-2 bg-blue-600 rounded-full"
-                    animate={{ 
-                      y: [0, -5, 0],
-                      opacity: [0.6, 1, 0.6]
-                    }}
-                    transition={{ 
-                      duration: 1.5,
-                      repeat: Infinity,
-                      delay: i * 0.2
-                    }}
-                  />
-                ))}
-              </div>
-            </motion.div>
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="animate-pulse w-2 h-2 bg-cyan-300/70 rounded-full absolute top-1/3 left-1/4 blur-sm"></div>
+            <div className="animate-ping w-3 h-3 bg-cyan-400/60 rounded-full absolute top-2/3 right-1/3 blur-md"></div>
+            <div className="animate-pulse w-2 h-2 bg-cyan-200/50 rounded-full absolute bottom-1/4 right-1/5 blur-sm"></div>
           </div>
         </div>
-      </motion.div>
-    </div>
+      </section>
+
+      {/* ABOUT THE PROJECT SECTION */}
+      <section
+        id="about"
+        className="w-full bg-gradient-to-b from-black via-gray-900 to-black text-center py-24 px-6 sm:px-12 md:px-24 opacity-0 transition-opacity duration-1000"
+      >
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-cyan-300 mb-6 drop-shadow-[0_0_15px_rgba(34,211,238,0.6)]">
+            About the Project
+          </h2>
+          <p className="text-base sm:text-lg md:text-xl text-gray-200 leading-relaxed">
+            <span className="font-semibold text-cyan-200">CYBERIA: The Internet Safety Game</span> is a 
+            3D educational simulation that aims to strengthen students’ awareness and understanding of 
+            digital threats such as phishing, scams, and misinformation. The project integrates 
+            <span className="text-cyan-300"> gamified learning</span> to make cybersecurity education 
+            more engaging and effective. <br /> <br />
+            Designed for <span className="font-semibold text-cyan-200">Digital Literacy</span> instruction, 
+            the game allows players to explore realistic online environments where they must analyze messages, 
+            identify suspicious activity, and make smart choices — turning theoretical lessons into practical 
+            experiences.
+          </p>
+          <p className="text-cyan-100 mt-8 text-lg">
+            This project demonstrates how gamification can transform education into an interactive and meaningful experience.
+          </p>
+        </div>
+      </section>
+
+      <style jsx>{`
+        @keyframes fadeIn {
+          0% {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 1.2s ease-in-out forwards;
+        }
+        .fade-in {
+          opacity: 1 !important;
+        }
+      `}</style>
+    </main>
   );
 }

@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <title>Biome Keeper</title>
+        <title>Cyberia</title>
         <meta name="description" content="Your adventure in the world of biomes begins here!" />
       </head>
       <body className={`${silkscreen.className} overflow-x-hidden`}>
@@ -37,7 +37,7 @@ export default function RootLayout({
               className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover"
             />
             <h1 className="text-2xl sm:text-3xl text-white">
-              <Link href="/" onClick={closeMenu}>Biome Keeper</Link>
+              <Link href="/" onClick={closeMenu}>Cyberia</Link>
             </h1>
           </div>
 

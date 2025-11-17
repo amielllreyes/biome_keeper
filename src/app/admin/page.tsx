@@ -103,12 +103,12 @@ export default function Admin() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-6">
       <header className="flex justify-between items-center mb-8">
         <motion.h1 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-3xl font-bold text-green-800"
+          className="text-3xl font-bold text-blue-800"
         >
           Admin Dashboard
         </motion.h1>
@@ -145,7 +145,7 @@ export default function Admin() {
           icon={<FiUser className="text-2xl" />}
           title="Players"
           value={stats.users}
-          color="bg-green-100 text-green-700"
+          color="bg-blue-100 text-blue-700"
         />
       </motion.div>
 
@@ -153,15 +153,15 @@ export default function Admin() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="bg-white rounded-xl shadow-md overflow-hidden border border-green-100"
+        className="bg-white rounded-xl shadow-md overflow-hidden border border-blue-100"
       >
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-green-50">
+            <thead className="bg-blue-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-green-700 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-green-700 uppercase tracking-wider">Email</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-green-700 uppercase tracking-wider">Role</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Email</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-blue-700 uppercase tracking-wider">Role</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -173,7 +173,7 @@ export default function Admin() {
                 </tr>
               ) : (
                 users.map((user) => (
-                  <tr key={user.id} className="hover:bg-green-50 transition-colors">
+                  <tr key={user.id} className="hover:bg-blue-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
                     <td className="px-6 py-4 whitespace-nowrap">

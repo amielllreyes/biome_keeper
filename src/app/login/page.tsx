@@ -8,9 +8,11 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
   sendPasswordResetEmail,
+  sendEmailVerification,
   User,
+  applyActionCode,
 } from 'firebase/auth';
-import { getDoc, doc, setDoc } from 'firebase/firestore';
+import { getDoc, doc, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 
 type MessageType = {
@@ -18,7 +20,7 @@ type MessageType = {
   type: 'error' | 'success' | 'info' | '';
 };
 
-type AuthStep = 'login' | 'forgotPassword';
+type AuthStep = 'login' | 'forgotPassword' | 'verifyEmail' | 'verifySuccess';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -28,28 +30,47 @@ export default function LoginPage() {
   const [step, setStep] = useState<AuthStep>('login');
   const [isOnline, setIsOnline] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
+  const [pendingUser, setPendingUser] = useState<User | null>(null);
+  const [isResendingVerification, setIsResendingVerification] = useState(false);
   const router = useRouter();
 
-  // Suppress Firebase console errors in production
+  // Check for email verification action in URL (for verification links)
   useEffect(() => {
-    if (process.env.NODE_ENV === 'production') {
-      const originalError = console.error;
-      console.error = (...args) => {
-        // Filter out Firebase auth errors
-        if (
-          args[0]?.toString().includes('FirebaseError') ||
-          args[0]?.toString().includes('auth/') ||
-          args[0]?.code?.includes('auth/')
-        ) {
-          return;
+    const handleEmailVerification = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const mode = urlParams.get('mode');
+      const actionCode = urlParams.get('oobCode');
+      
+      if (mode === 'verifyEmail' && actionCode) {
+        try {
+          setIsLoading(true);
+          await applyActionCode(auth, actionCode);
+          
+          // Update Firestore to mark email as verified
+          if (auth.currentUser) {
+            const userRef = doc(db, 'users', auth.currentUser.uid);
+            await updateDoc(userRef, {
+              emailVerified: true
+            });
+          }
+          
+          setStep('verifySuccess');
+          setMessage({
+            text: 'Email verified successfully! You can now sign in.',
+            type: 'success'
+          });
+        } catch (error) {
+          setMessage({
+            text: 'Invalid or expired verification link. Please request a new one.',
+            type: 'error'
+          });
+        } finally {
+          setIsLoading(false);
         }
-        originalError.apply(console, args);
-      };
+      }
+    };
 
-      return () => {
-        console.error = originalError;
-      };
-    }
+    handleEmailVerification();
   }, []);
 
   // Network status detection
@@ -66,18 +87,27 @@ export default function LoginPage() {
     };
   }, []);
 
-  // Auth state listener
+  // REMOVE or DISABLE the auth state listener during login
+  // This prevents automatic redirect
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        checkUserRoleAndRedirect(user);
+    let isLoginAttempt = false;
+    
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      // Only auto-redirect if we're not in the middle of a login attempt
+      // and not on verification screens
+      if (user && !isLoginAttempt && step === 'login') {
+        await user.reload();
+        
+        if (user.emailVerified) {
+          checkUserRoleAndRedirect(user);
+        }
       }
     });
     
     return () => {
       unsubscribe();
     };
-  }, [router]);
+  }, [step]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,7 +120,6 @@ export default function LoginPage() {
       return;
     }
 
-    // Basic validation
     if (!email || !password) {
       setMessage({ 
         text: 'Please enter both email and password.', 
@@ -104,13 +133,69 @@ export default function LoginPage() {
     setRetryCount(0);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      // The onAuthStateChanged will handle the redirect
-    } catch (error: any) {
-      // Suppress console error by not logging it
-      setIsLoading(false);
+      // Sign in the user
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Force reload to get fresh email verification status
+      await user.reload();
       
-      // Handle specific Firebase auth errors with user-friendly messages
+      // Get the fresh user after reload
+      const freshUser = auth.currentUser;
+      
+      if (!freshUser) {
+        throw new Error('User not found after reload');
+      }
+
+      console.log('Email verified status:', freshUser.emailVerified); // DEBUG
+
+      // Check Firestore for email verification status as well
+      const userRef = doc(db, 'users', freshUser.uid);
+      const userSnap = await getDoc(userRef);
+      const firestoreVerified = userSnap.exists() ? userSnap.data().emailVerified : false;
+
+      console.log('Firestore verification status:', firestoreVerified); // DEBUG
+
+      // CRITICAL CHECK: Block if email is not verified in EITHER Firebase Auth OR Firestore
+      // This catches old accounts that were created before verification was implemented
+      if (!freshUser.emailVerified || !firestoreVerified) {
+        console.log('Email NOT verified, blocking login'); // DEBUG
+        
+        // Send verification email if not already sent
+        if (!freshUser.emailVerified) {
+          try {
+            await sendEmailVerification(freshUser);
+            console.log('Verification email sent');
+          } catch (error) {
+            console.error('Failed to send verification email:', error);
+          }
+        }
+        
+        // Store user for resend verification
+        setPendingUser(freshUser);
+        
+        // Sign out immediately
+        await auth.signOut();
+        
+        // Show verification screen
+        setStep('verifyEmail');
+        setMessage({
+          text: 'Please verify your email address before signing in. We just sent you a verification link - check your inbox!',
+          type: 'info'
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      console.log('Email IS verified, proceeding to profile'); // DEBUG
+      
+      // Email is verified, proceed
+      await checkUserRoleAndRedirect(freshUser);
+      
+    } catch (error: any) {
+      setIsLoading(false);
+      console.error('Login error:', error); // DEBUG
+      
       switch (error.code) {
         case 'auth/invalid-credential':
         case 'auth/wrong-password':
@@ -153,27 +238,64 @@ export default function LoginPage() {
     }
   };
 
+  const handleResendVerification = async () => {
+    if (!pendingUser) {
+      setMessage({
+        text: 'No pending user found. Please try logging in again.',
+        type: 'error'
+      });
+      return;
+    }
+
+    setIsResendingVerification(true);
+    try {
+      await sendEmailVerification(pendingUser);
+      setMessage({
+        text: 'Verification email sent! Check your inbox and spam folder.',
+        type: 'success'
+      });
+    } catch (error: any) {
+      console.error('Resend verification error:', error);
+      setMessage({
+        text: 'Failed to send verification email. Please try again or contact support.',
+        type: 'error'
+      });
+    } finally {
+      setIsResendingVerification(false);
+    }
+  };
+
   const checkUserRoleAndRedirect = async (user: User) => {
     try {
       const userRef = doc(db, 'users', user.uid);
       const userSnap = await getDoc(userRef);
 
-      setIsLoading(false);
-
       if (!userSnap.exists()) {
+        // Create new user document
         await setDoc(userRef, {
           name: user.email?.split('@')[0] || 'User',
           email: user.email,
           role: 'user',
-          createdAt: new Date()
+          createdAt: new Date(),
+          emailVerified: user.emailVerified
         });
         
+        setIsLoading(false);
         router.push('/profile');
         return;
       }
 
+      // Update email verification status in Firestore
+      if (user.emailVerified) {
+        await updateDoc(userRef, {
+          emailVerified: true
+        });
+      }
+
       const userData = userSnap.data();
       const role = userData.role;
+
+      setIsLoading(false);
 
       if (role === 'admin') {
         router.push('/admin');
@@ -182,6 +304,7 @@ export default function LoginPage() {
       }
     } catch (error: any) {
       setIsLoading(false);
+      console.error('checkUserRoleAndRedirect error:', error);
       
       if (error.code === 'failed-precondition') {
         setMessage({ 
@@ -297,7 +420,7 @@ export default function LoginPage() {
             transition={{ delay: 0.4 }}
             className="text-lg"
           >
-            Your Adventure in the World of Biomes Begins Here!
+            Your Adventure in the World of Cyberia Begins Here!
           </motion.p>
         </motion.div>
       </motion.div>
@@ -446,6 +569,115 @@ export default function LoginPage() {
                   </Link>
                 </motion.p>
               </form>
+            ) : step === 'verifyEmail' ? (
+              /* Email Verification Required */
+              <div className="text-center">
+                <motion.h2
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-2xl font-bold text-blue-900 mb-6"
+                >
+                  Verify Your Email
+                </motion.h2>
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="mb-6"
+                >
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-600 mb-4">
+                    We've sent a verification link to <strong>{pendingUser?.email}</strong>. 
+                    Please check your inbox and click the link to verify your email address.
+                  </p>
+                  <p className="text-sm text-gray-500 mb-6">
+                    Didn't receive the email? Check your spam folder or request a new verification link.
+                  </p>
+                </motion.div>
+
+                {message.text && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className={`mb-4 p-3 rounded-lg border ${getMessageClass(message.type)}`}
+                  >
+                    {message.text}
+                  </motion.div>
+                )}
+
+                <div className="space-y-3">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleResendVerification}
+                    disabled={isResendingVerification}
+                    className={`w-full py-3 px-4 bg-blue-600 text-white font-medium rounded-lg shadow-md transition-all ${
+                      isResendingVerification ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
+                    }`}
+                  >
+                    {isResendingVerification ? 'Sending...' : 'Resend Verification Email'}
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => {
+                      setStep('login');
+                      setMessage({ text: '', type: '' });
+                      setPendingUser(null);
+                    }}
+                    className="w-full py-2 text-blue-800 hover:text-blue-900 font-medium transition-colors"
+                  >
+                    Back to Login
+                  </motion.button>
+                </div>
+              </div>
+            ) : step === 'verifySuccess' ? (
+              /* Email Verification Success */
+              <div className="text-center">
+                <motion.h2
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-2xl font-bold text-green-900 mb-6"
+                >
+                  Email Verified!
+                </motion.h2>
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="mb-6"
+                >
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-600 mb-6">
+                    Your email has been successfully verified! You can now sign in to your account.
+                  </p>
+                </motion.div>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    setStep('login');
+                    setMessage({ text: '', type: '' });
+                  }}
+                  className="w-full py-3 px-4 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-md transition-all"
+                >
+                  Continue to Sign In
+                </motion.button>
+              </div>
             ) : (
               /* Forgot Password Form */
               <form onSubmit={handleForgotPassword}>

@@ -164,7 +164,7 @@ export default function ProfilePage() {
               <svg className="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
-              Download Biome Keeper
+              Download Cyberia
             </h2>
             <p className="mb-4 text-blue-100">
               Start your adventure! Download the game and play with your account.
@@ -184,19 +184,6 @@ export default function ProfilePage() {
             <p className="text-sm text-blue-200 mt-2">
               File size: ~150MB • Version 1.0
             </p>
-          </motion.section>
-
-          {/* Game Progress Section */}
-          <motion.section 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-          >
-            <h2 className="text-xl font-semibold text-emerald-800 mb-4">Game Progress</h2>
-            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-6 text-center">
-              <p className="text-emerald-700 mb-3">Your game progress will appear here once you start playing!</p>
-              <p className="text-sm text-emerald-600">Download the game above to begin your adventure.</p>
-            </div>
           </motion.section>
 
           {/* Action Buttons */}

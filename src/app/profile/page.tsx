@@ -172,8 +172,8 @@ export default function ProfilePage() {
             <motion.a
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
-              href="/BiomeKeeper-20250512T223132Z-001.7z"
-              download="BiomeKeeper.7z"
+              href="/Cyberia_App.7z"
+              download="Cyberia_App.7z"
               className="inline-flex items-center gap-2 bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">

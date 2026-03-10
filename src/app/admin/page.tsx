@@ -214,10 +214,9 @@ export default function AdminDashboard() {
   const totalUsers      = users.length;
   const totalAdmins     = users.filter(u => u.role === 'admin').length;
   const totalPlayers    = users.filter(u => u.role === 'user').length;
-  // Use payments collection if populated, otherwise fall back to hasPurchased flag on users
-  const purchasedCount  = payments.length > 0
-    ? payments.length
-    : users.filter(u => u.hasPurchased).length;
+  // Use payments collection as source of truth for purchases
+  // hasPurchased on users is just a flag — payments collection is the real record
+  const purchasedCount = payments.length;
   const totalRevenuePHP = payments.reduce((s, p) => s + (p.amount ?? PRICE_PHP), 0);
   const activeGamers    = users.filter(u => (u.totalSoloScore ?? 0) > 0).length;
   const avgScore        = totalPlayers > 0
@@ -304,7 +303,7 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
               <StatCard label="Total Accounts"  value={totalUsers}     sub="registered"                         color="blue"   icon={<FiUsers />} />
               <StatCard label="Game Purchased"  value={purchasedCount} sub={`₱${totalRevenuePHP.toLocaleString()} earned`}    color="green"  icon={<FiDownload />} />
-             
+              <StatCard label="Avg Best Score"  value={avgScore}       sub="across all players"                 color="purple" icon={<FiAward />} />
             </div>
 
             {/* Two-col breakdown */}
@@ -383,7 +382,7 @@ export default function AdminDashboard() {
                       {[
                         { key: 'name',                label: 'Player' },
                         { key: 'email',               label: 'Email' },
-        
+                        { key: 'totalSoloScore',      label: 'Best Score' },
                         { key: 'totalCoins',          label: 'Coins' },
                         { key: 'levelsUnlocked',      label: 'Levels' },
                         { key: 'totalMultiplayerWins',label: 'PvP Wins' },
@@ -420,7 +419,7 @@ export default function AdminDashboard() {
                           </div>
                         </td>
                         <td className="px-5 py-4 text-slate-400">{u.email}</td>
-                       
+                        <td className="px-5 py-4 font-bold text-yellow-400">{(u.totalSoloScore ?? 0).toLocaleString()}</td>
                         <td className="px-5 py-4 text-cyan-400">{(u.totalCoins ?? 0).toLocaleString()}</td>
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-2">
@@ -534,7 +533,7 @@ export default function AdminDashboard() {
                 <table className="min-w-full divide-y divide-slate-700 text-sm">
                   <thead>
                     <tr>
-                      {['Rank', 'Player', 'Score','Levels', 'PvP Record'].map(h => (
+                      {['Rank', 'Player', 'Score (Coins)', 'Best Score', 'Levels', 'PvP Record'].map(h => (
                         <th key={h} className="px-5 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">{h}</th>
                       ))}
                     </tr>
@@ -566,7 +565,7 @@ export default function AdminDashboard() {
                             </div>
                           </td>
                           <td className="px-5 py-4 font-bold text-cyan-400">{entry.coins.toLocaleString()}</td>
-                         
+                          <td className="px-5 py-4 text-yellow-400">{(entry.totalSoloScore ?? 0).toLocaleString()}</td>
                           <td className="px-5 py-4">
                             <div className="flex gap-0.5">
                               {[1,2,3,4,5].map(lvl => (

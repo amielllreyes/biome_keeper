@@ -115,13 +115,14 @@ export default function ProfilePage() {
       setDisplayName(user.displayName || user.email?.split('@')[0] || 'Cyberian');
       setMemberSince(new Date().toLocaleDateString());
 
-      // ── 1. Firestore: optional profile (name, createdAt) ──────────────────
+      // ── 1. Firestore: optional profile (name, createdAt, hasPurchased) ──────
       try {
         const userSnap = await getDoc(doc(db, 'users', user.uid));
         if (userSnap.exists()) {
           const fd = userSnap.data();
-          if (fd.name)      setDisplayName(fd.name);
-          if (fd.createdAt) setMemberSince(new Date(fd.createdAt).toLocaleDateString());
+          if (fd.name)         setDisplayName(fd.name);
+          if (fd.createdAt)    setMemberSince(new Date(fd.createdAt).toLocaleDateString());
+          if (fd.hasPurchased) setPaid(true); // Restore purchase state across sessions
         }
       } catch (e) {
         console.warn('[Profile] Firestore fetch failed (non-critical):', e);
@@ -581,29 +582,29 @@ export default function ProfilePage() {
                   onApprove={(data, actions) => {
                     if (!actions.order) return Promise.reject(new Error("Order approval failed"));
                     return actions.order.capture().then(async (details) => {
-  // Save payment record for admin revenue tracking
-  try {
-    const { addDoc, collection, doc, updateDoc } = await import('firebase/firestore');
-    await addDoc(collection(db, 'payments'), {
-      userId:     auth.currentUser?.uid ?? '',
-      playerName: displayName,
-      email:      userEmail,
-      amount:     150,
-      currency:   'PHP',
-      orderId:    details.id,
-      paidAt:     new Date().toISOString(),
-    });
-    await updateDoc(doc(db, 'users', auth.currentUser!.uid), {
-      hasPurchased: true
-    });
-  } catch (e) {
-    console.warn('Payment record save failed:', e);
-  }
-
-  setPaid(true);
-  setShowPaymentModal(false);
-  triggerAchievement('🎮 Payment Successful! Welcome to Cyberia!');
-});
+                      if (paid) return;
+                      try {
+                        const { addDoc, collection, doc, updateDoc, query, where, getDocs } = await import('firebase/firestore');
+                        const existing = await getDocs(query(collection(db, 'payments'), where('orderId', '==', details.id)));
+                        if (existing.empty) {
+                          await addDoc(collection(db, 'payments'), {
+                            userId:     auth.currentUser?.uid ?? '',
+                            playerName: displayName,
+                            email:      userEmail,
+                            amount:     150,
+                            currency:   'PHP',
+                            orderId:    details.id,
+                            paidAt:     new Date().toISOString(),
+                          });
+                        }
+                        await updateDoc(doc(db, 'users', auth.currentUser!.uid), { hasPurchased: true });
+                      } catch (e) {
+                        console.warn('Payment record save failed:', e);
+                      }
+                      setPaid(true);
+                      setShowPaymentModal(false);
+                      triggerAchievement('🎮 Payment Successful! Welcome to Cyberia!');
+                    });
                   }}
                   onError={(err) => { console.error("PayPal Error:", err); alert("Payment failed. Please try again."); }}
                   onCancel={() => alert("Payment cancelled.")}

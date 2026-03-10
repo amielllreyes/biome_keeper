@@ -3,7 +3,9 @@
 import { Silkscreen } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 const silkscreen = Silkscreen({
   weight: ['400', '700'],
@@ -17,9 +19,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Build nav items based on auth state
+  const navItems = isLoggedIn
+    ? ['Home', 'About Us', 'Profile']   // Hide Login when logged in
+    : ['Home', 'About Us', 'Login'];    // Hide Profile when logged out
 
   return (
     <html lang="en">
@@ -44,7 +59,7 @@ export default function RootLayout({
           {/* Desktop Nav */}
           <nav className="hidden md:flex ml-auto">
             <ul className="flex gap-4">
-              {['Home', 'About Us', 'Login', 'Profile'].map((item) => (
+              {navItems.map((item) => (
                 <li key={item}>
                   <Link
                     href={item === 'Home' ? '/' : `/${item.replace(/\s+/g, '').toLowerCase()}`}
@@ -63,21 +78,9 @@ export default function RootLayout({
             className="md:hidden flex flex-col justify-center items-center w-8 h-8 relative z-50"
             aria-label="Toggle menu"
           >
-            <span
-              className={`w-6 h-0.5 bg-white transition-all duration-300 ${
-                isMenuOpen ? 'rotate-45 translate-y-2' : ''
-              }`}
-            ></span>
-            <span
-              className={`w-6 h-0.5 bg-white transition-all duration-300 my-1.5 ${
-                isMenuOpen ? 'opacity-0' : 'opacity-100'
-              }`}
-            ></span>
-            <span
-              className={`w-6 h-0.5 bg-white transition-all duration-300 ${
-                isMenuOpen ? '-rotate-45 -translate-y-2' : ''
-              }`}
-            ></span>
+            <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
+            <span className={`w-6 h-0.5 bg-white transition-all duration-300 my-1.5 ${isMenuOpen ? 'opacity-0' : 'opacity-100'}`}></span>
+            <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
           </button>
 
           {/* Mobile Menu Overlay */}
@@ -86,7 +89,7 @@ export default function RootLayout({
             ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
           >
             <nav className="flex flex-col items-center justify-center h-full gap-8 text-2xl text-white">
-              {['Home', 'About Us', 'Login', 'Profile'].map((item) => (
+              {navItems.map((item) => (
                 <Link
                   key={item}
                   href={item === 'Home' ? '/' : `/${item.replace(/\s+/g, '').toLowerCase()}`}
